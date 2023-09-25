@@ -4,6 +4,7 @@
 import requests
 import random
 import re
+import sys
 from bs4 import BeautifulSoup
 
 # HUNTER GAME!!! A VSBW GAME FOR MY LOVELY WIFE <3 
@@ -58,10 +59,10 @@ def compare_tiers(tier1, tier2):
     if(first[-1] < second[-1]):
         return 1
     elif(first[-1] == second[-1]):
-        if(first[1] < second[1]):
+        if(first[1] > second[1]):
             return 1
         elif(first[1] == second[1]):
-            if(first[0] == "High" and second[0==("Low" or '')]):
+            if(first[0] == "High" and second[0]==("Low" or '')):
                 return 1
             elif(first[0] == "Low" and second[0] == ''):
                 return -1
@@ -70,8 +71,7 @@ def compare_tiers(tier1, tier2):
             else: 
                 return 0
     return -1
-            
-    return None
+
     
 # Determines the Greatest Tier in a String
 def get_greatest_tier(string):
@@ -82,31 +82,37 @@ def get_greatest_tier(string):
             greatest_tier = tier
     return greatest_tier
 
+#----------------HUNTER GAME--------------------------------
+
 # Operates The Entire Game:
 class HunterGame:
-    player = "Nobody..."
-    score = 0
-    best_score = 0
+    _player = "Nobody..."
+    _score = 0
+    _best_score = 0
+    _game = True
     
     # Function to Run The Menu
     def main_game_loop(self):
-        self.player = input("Please Input Your Name, Player: ")
-        self.Hunter = HunterGameInstance(self.player)
-        print(f"Welcome, {self.player}\n")
-        print(f"Your Best Recorded Score Is: {self.best_score}\n\n")
+        self._player = input("Please Input Your Name, Player: ")
+        self.Hunter = HunterGameInstance(self._player)
+        print(f"Welcome, {self._player}\n")
+        print(f"Your Best Recorded Score Is: {self._best_score}\n\n")
         
         # While Loop that Facilitates the Menu
-        while True:
+        while self._game:
             menu_choice = input("Please Input 1 to Play The Game, or 0 to Exit:\n")
             print()
             
-            if(menu_choice != 0):
+            if(menu_choice == '1'):
+                self._game = True
                 while self.Hunter.is_correct == True:
                     self.Hunter.game_instance()
                     self.cmdline_ui()
             else:
-                print(f"Your Best Recorded Score is: {self.best_score}, GoodBye!\n\n")
-                exit()
+                self._game = False
+                print(f"Your Best Recorded Score is: {self._best_score}, GoodBye!\n\n")
+        
+        exit()
 
     # Function to Run the User Interface in CMDLine
     def cmdline_ui(self):
@@ -140,17 +146,25 @@ class HunterGame:
 
         for statement in self.Hunter.strongest:
             print(statement)
+            print()
 
         # Update user's score
         if self.Hunter.is_correct:
-            self.score += 1
+            self._score += 1
+            if(self._best_score < self._score): 
+                self._best_score = self._score
+            print(f"Current Score: {self._score}")  
         else:
-            self.score = 0
+            if(self._best_score < self._score): 
+                self._best_score = self._score
+            print(f"Total Score: {self._best_score}")  
+            self._score = 0
+            
 
-        print(f"Current Score: {self.score}")  # Optionally display current score
-
+        
         return self.Hunter.is_correct
         
+#----------------HUNTER GAME INSTANCE-----------------------
 # Operates an Instance Of The Game
 class HunterGameInstance:
     
@@ -184,12 +198,12 @@ class HunterGameInstance:
         stronger_opp = [None, None]
         
         comparison_result = compare_tiers(first_tier, second_tier)
-        if comparison_result == -1:
+        if comparison_result == 1:
             strongest[0] = first_opp[0] + " is stronger than " + second_opp[0]
             strongest[1] = first_tier + " is more powerful than " + second_tier
             stronger_opp = first_opp
 
-        elif comparison_result == 1:
+        elif comparison_result == -1:
             strongest[0] = second_opp[0] + " is stronger than " + first_opp[0]
             strongest[1] = second_tier + " is more powerful than " + first_tier
             stronger_opp = second_opp
@@ -218,7 +232,7 @@ class HunterGameInstance:
             # Extract the character's image link
             floatright_div = main_div.find("div", class_="floatright")
             image_element = floatright_div.find("a", class_="image") if floatright_div else None
-            image_link = image_element["href"] if image_element else None
+            image_link = image_element["href"] if image_element else "src/blank.png"
 
             # Extract the character's tier (keeping the logic unchanged)
             tier = None
