@@ -1,3 +1,7 @@
+# Alice Void 
+# L.E: 9/24/2023
+# Compiles the List of Characters
+
 import requests
 import random
 from bs4 import BeautifulSoup

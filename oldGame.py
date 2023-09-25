@@ -1,3 +1,7 @@
+# Alice Void 
+# L.E: 9/24/2023
+# DEPRECIATED OLD GAME DESIGN
+
 import requests
 import random
 import re
