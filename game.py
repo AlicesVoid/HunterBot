@@ -80,67 +80,98 @@ def get_greatest_tier(string):
     for tier in tiers:
         if compare_tiers(tier, greatest_tier) == 1:
             greatest_tier = tier
-    print("greatest tier is: " + greatest_tier)
     return greatest_tier
 
-
+# Operates The Entire Game:
 class HunterGame:
+    player = "Nobody..."
+    score = 0
+    best_score = 0
     
-    # CONSTRUCTOR
-    def __init__(self, player_name):
-        self.player = player_name
-        self.score = 0
+    # Function to Run The Menu
+    def main_game_loop(self):
+        self.player = input("Please Input Your Name, Player: ")
+        self.Hunter = HunterGameInstance(self.player)
+        print(f"Welcome, {self.player}\n")
+        print(f"Your Best Recorded Score Is: {self.best_score}\n\n")
+        
+        # While Loop that Facilitates the Menu
+        while True:
+            menu_choice = input("Please Input 1 to Play The Game, or 0 to Exit:\n")
+            print()
+            
+            if(menu_choice != 0):
+                while self.Hunter.is_correct == True:
+                    self.Hunter.game_instance()
+                    self.cmdline_ui()
+            else:
+                print(f"Your Best Recorded Score is: {self.best_score}, GoodBye!\n\n")
+                exit()
 
-    # Runs One Instance of The Game
-    def game_instance(self):
-        # Create two opponents using get_character_info and store them in variables.
-        first_opp, second_opp = self.get_character_info()
-
-        # Use test_tiers to determine which opponent is strongest.
-        strongest, stronger_opp = self.test_tiers(first_opp, second_opp)
-
+    # Function to Run the User Interface in CMDLine
+    def cmdline_ui(self):
         # Print each attribute of first_opp and second_opp to the console.
         print("First Opponent:")
-        for attribute in first_opp[:2]:
+        for attribute in self.Hunter.first_opp[:2]:
             print(attribute)
         print("\nSecond Opponent:")
-        for attribute in second_opp[:2]:
+        for attribute in self.Hunter.second_opp[:2]:
             print(attribute)
         print()  # Space between the two lists
 
         # Prompt the user to make their guess.
-        guess = input("Enter '1' if you think the first opponent is stronger,\nor '2' if you think the second opponent is stronger, \n or 3 if it's a tie.\n")
-        print()
+        self.Hunter.guess = input("Enter '1' if you think the first opponent is stronger,\nor '2' if you think the second opponent is stronger, \n or 3 if it's a tie.\n")
         
         # Evaluate user's guess
-        is_correct = False
+        self.Hunter.is_correct = False
 
-        if guess == '1' and first_opp[0] == stronger_opp[0]:
-            is_correct = True
-        elif guess == '2' and second_opp[0] == stronger_opp[0]:
-            is_correct = True
-        elif guess == '3' and stronger_opp[0] is None:
-            is_correct = True
+        if self.Hunter.guess == '1' and self.Hunter.first_opp[0] == self.Hunter.stronger_opp[0]:
+            self.Hunter.is_correct = True
+        elif self.Hunter.guess == '2' and self.Hunter.second_opp[0] == self.Hunter.stronger_opp[0]:
+            self.Hunter.is_correct = True
+        elif self.Hunter.guess == '3' and self.Hunter.stronger_opp[0] is None:
+            self.Hunter.is_correct = True
 
         # Display feedback to user
-        if is_correct:
+        if self.Hunter.is_correct:
             print("CORRECT!")
         else:
             print("WRONG...")
 
-        for statement in strongest:
+        for statement in self.Hunter.strongest:
             print(statement)
 
         # Update user's score
-        if is_correct:
+        if self.Hunter.is_correct:
             self.score += 1
         else:
             self.score = 0
 
         print(f"Current Score: {self.score}")  # Optionally display current score
 
-        return guess 
+        return self.Hunter.is_correct
+        
+# Operates an Instance Of The Game
+class HunterGameInstance:
+    
+    _player = "Nobody..."
+    _strongest = [None, None]
+    _first_opp, _second_opp, _stronger_opp = [None, None, None]
+    _guess = 0
+    _is_correct = True
+    
+    # CONSTRUCTOR
+    def __init__(self, player_name):
+        self._player = player_name
 
+    # Runs One Instance of The Game
+    def game_instance(self):
+        # Create two opponents using get_character_info and store them in class attributes.
+        self._first_opp, self._second_opp = self.get_character_info()
+
+        # Use test_tiers to determine which opponent is strongest and store the results in class attributes.
+        self._strongest, self._stronger_opp = self.test_tiers(self._first_opp, self._second_opp)
+    
     # Checks Two Opponents To See Who Is Stronger
     def test_tiers(self, first_opp, second_opp):  
         
@@ -168,7 +199,6 @@ class HunterGame:
     # Collects the Info For Each Character
     def get_character_info(self):
         character_urls = self.rand_chars()  # Get the two random character URLs
-        print(character_urls)
         
         # Collects Character Info from the Site
         def parse_character(url):
@@ -179,7 +209,6 @@ class HunterGame:
             # Extract the character's full name
             name_span = soup.find("span", class_="mw-page-title-main")
             name = name_span.text if name_span else None
-            print(name)
             
             # Find the main div containing the character's info
             main_div = soup.find("div", class_="mw-parser-output")
@@ -214,7 +243,76 @@ class HunterGame:
         
         return random.sample(all_chars, 2)
     
+    # ---------- GETTER AND SETTER METHODS --------- 
+    # Getter for player
+    @property
+    def player(self):
+        return self._player
 
-    
-Hunter = HunterGame("alice")
-Hunter.game_instance()
+    # Setter for player
+    @player.setter
+    def player(self, value):
+        self._player = value
+
+    # Getter for strongest
+    @property
+    def strongest(self):
+        return self._strongest
+
+    # Setter for strongest
+    @strongest.setter
+    def strongest(self, value):
+        self._strongest = value
+
+    # Getter for first_opp
+    @property
+    def first_opp(self):
+        return self._first_opp
+
+    # Setter for first_opp
+    @first_opp.setter
+    def first_opp(self, value):
+        self._first_opp = value
+
+    # Getter for second_opp
+    @property
+    def second_opp(self):
+        return self._second_opp
+
+    # Setter for second_opp
+    @second_opp.setter
+    def second_opp(self, value):
+        self._second_opp = value
+
+    # Getter for stronger_opp
+    @property
+    def stronger_opp(self):
+        return self._stronger_opp
+
+    # Setter for stronger_opp
+    @stronger_opp.setter
+    def stronger_opp(self, value):
+        self._stronger_opp = value
+
+    # Getter for guess
+    @property
+    def guess(self):
+        return self._guess
+
+    # Setter for guess
+    @guess.setter
+    def guess(self, value):
+        self._guess = value
+
+    # Getter for is_correct
+    @property
+    def is_correct(self):
+        return self._is_correct
+
+    # Setter for is_correct
+    @is_correct.setter
+    def is_correct(self, value):
+        self._is_correct = value
+
+Wife = HunterGame()
+Wife.main_game_loop()
