@@ -4,7 +4,6 @@
 import requests
 import random
 import re
-import sys
 from bs4 import BeautifulSoup
 
 # HUNTER GAME!!! A VSBW GAME FOR MY LOVELY WIFE <3 
