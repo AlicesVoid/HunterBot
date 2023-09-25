@@ -108,5 +108,3 @@ def write_chars():
 # print(randChar, '\n')
 # allChar = get_all_characters(page)
 # print(allChar[1:10], '\n')
-
-write_chars()

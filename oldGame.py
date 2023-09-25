@@ -186,6 +186,7 @@ def hunterGame(guess, first_opp, second_opp):
     print(first_tier, second_tier)
     strongest = ["Equal Strength", "Tie", "No Guess"]
     answer    = compare_tiers(first_tier, second_tier)
+    
     # Evaluate Game
     if guess == answer:
         strongest[-1] = "CORRECT!"
@@ -202,10 +203,5 @@ def hunterGame(guess, first_opp, second_opp):
     
     return strongest
     
-# When Code is Loaded, Character List is Produced
-characters_list = make_page_list()    
-    
-opponents = makeOpponents()
-print(remove_newlines_tabs(opponents[0][0]), opponents[0][-1])
-print(remove_newlines_tabs(opponents[1][0]), opponents[1][-1])
-print(testTiers(opponents[0], opponents[1]))
+char = get_character_info("https://vsbattles.fandom.com/wiki/%C3%89milie_du_Ch%C3%A2telet")
+print(char)
