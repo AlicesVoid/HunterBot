@@ -97,6 +97,7 @@ class HunterGame:
             
             if(menu_choice == '1'):
                 self._game = True
+                self.Hunter.is_correct = True
                 while self.Hunter.is_correct == True:
                     self.Hunter.game_instance()
                     self.cmdline_ui()
@@ -211,6 +212,7 @@ class HunterGameInstance:
             """Helper function to parse individual character info"""
             page = requests.get(url)  # strip() is used to remove any trailing newline
             soup = BeautifulSoup(page.content, "html.parser")
+            
 
             # Extract the character's full name
             name_span = soup.find("span", class_="mw-page-title-main")
@@ -222,9 +224,20 @@ class HunterGameInstance:
                 return [name, None, None]
             
             # Extract the character's image link
+            image_element = soup.select_one('a[class="image"][href^="https://static.wikia.nocookie.net/"] > img[src][loading="lazy"]')
+            if not image_element:
+                image_link = "src/blank.png"
+            else:
+                if "data-src" in image_element:
+                    image_link = image_element["data-src"] 
+                else:
+                    image_link = image_element["src"]
+
+            '''
             floatright_div = main_div.find("div", class_="floatright")
             image_element = floatright_div.find("a", class_="image") if floatright_div else None
             image_link = image_element["href"] if image_element else "src/blank.png"
+            '''
 
             # Extract the character's tier (keeping the logic unchanged)
             tier = None
@@ -320,5 +333,6 @@ class HunterGameInstance:
     def is_correct(self, value):
         self._is_correct = value
 
-Wife = HunterGame()
-Wife.main_game_loop()
+if __name__ == "__main__":
+    Wife = HunterGame()
+    Wife.main_game_loop()
