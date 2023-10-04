@@ -1,19 +1,77 @@
-import PySimpleGUI as sg
 import game
+import sys
+from PySide6.QtWidgets import QApplication, QMainWindow, QLabel, QVBoxLayout, QHBoxLayout, QPushButton, QWidget, QFrame
+from PySide6.QtGui import QPixmap
+from PySide6.QtCore import Qt
 
-sg.theme('DarkAmber')   # Add a touch of color
-# All the stuff inside your window.
-layout = [  [sg.Text('Some text on Row 1')],
-            [sg.Text('Enter something on Row 2'), sg.InputText()],
-            [sg.Button('Ok'), sg.Button('Cancel')] ]
+class MyApp(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.initUI()
 
-# Create the Window
-window = sg.Window('Window Title', layout)
-# Event Loop to process "events" and get the "values" of the inputs
-while True:
-    event, values = window.read()
-    if event == sg.WIN_CLOSED or event == 'Cancel': # if user closes window or clicks cancel
-        break
-    print('You entered ', values[0])
+    def initUI(self):
+        # Set up the main layout
+        main_layout = QVBoxLayout()
 
-window.close()
+        # 1. Display the images side by side
+        image_layout = QHBoxLayout()
+        pixmap = QPixmap('src/blank.png')
+
+        for _ in range(2):
+            label = QLabel()
+
+            # Calculate the scaled size while maintaining the aspect ratio
+            scaled_size = pixmap.size()
+            scaled_size.scale(label.size(), Qt.KeepAspectRatio)
+
+            label.setPixmap(pixmap.scaled(scaled_size, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+            label.setAlignment(Qt.AlignCenter)  # Center the image in case the label's size is larger
+
+            image_layout.addWidget(label)
+
+        main_layout.addLayout(image_layout)
+
+        # 2. Add a divider line
+        divider = QFrame()
+        divider.setFrameShape(QFrame.HLine)
+        divider.setFrameShadow(QFrame.Sunken)
+        main_layout.addWidget(divider)
+
+        # 3. Add a Text Box for Display Purposes 
+        text_label = QLabel("PissFart")
+        text_label.setAlignment(Qt.AlignCenter)
+        text_label.setStyleSheet("QLabel { max-height: 3em; text-overflow: ellipsis; }")
+        main_layout.addWidget(text_label)
+        
+
+        # 4. Add a divider line
+        divider = QFrame()
+        divider.setFrameShape(QFrame.HLine)
+        divider.setFrameShadow(QFrame.Sunken)
+        main_layout.addWidget(divider)
+
+        # 5. Add three buttons
+        button_layout = QHBoxLayout()
+        for name in ['start', 'middle', 'exit']:
+            btn = QPushButton(name)
+            button_layout.addWidget(btn)
+        main_layout.addLayout(button_layout)
+
+        # Set up the central widget
+        central_widget = QWidget()
+        central_widget.setLayout(main_layout)
+        self.setCentralWidget(central_widget)
+
+        # Set the window properties
+        self.setWindowTitle('Image and Buttons GUI')
+        self.setGeometry(100, 100, 800, 600)
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    window = MyApp()
+    window.show()
+    sys.exit(app.exec_())
+
+
+
+
